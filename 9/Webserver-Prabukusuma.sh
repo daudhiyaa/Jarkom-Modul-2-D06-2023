@@ -2,6 +2,8 @@ echo nameserver 192.168.122.1 >/etc/resolv.conf
 
 # No 9
 apt-get update && apt install nginx php php-fpm -y
+service nginx start
+service php7.0-fpm start
 
 mkdir /var/www/jarkom
 echo "
