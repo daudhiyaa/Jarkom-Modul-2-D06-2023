@@ -12,7 +12,7 @@ service bind9 restart
 # No 7
 echo "
 options {
-    directory "/var/cache/bind/";
+    directory \"/var/cache/bind/\";
 
     // If there is a firewall between you and nameservers you want
     // to talk to, you may need to fix the firewall to allow multiple
