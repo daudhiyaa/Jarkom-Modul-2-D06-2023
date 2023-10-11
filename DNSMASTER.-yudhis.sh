@@ -25,7 +25,7 @@ echo "
                             604800 )    ; Negative Cache TTL
 ;
 @       IN      NS      arjuna.D06.com.
-@       IN      A       192.194.1.3     ; IP DNSMASTER
+@       IN      A       192.194.3.5     ; IP LB-ARJUNA
 www     IN      CNAME   arjuna.D06.com.
 @       IN      AAAA    ::1
 " >/etc/bind/jarkom/arjuna.D06.com
@@ -52,7 +52,7 @@ echo "
                             604800 )    ; Negative Cache TTL
 ;
 @       IN      NS      abimanyu.D06.com.
-@       IN      A       192.194.1.3     ; IP DNSMASTER
+@       IN      A       192.194.3.2     ; IP Abimanyu
 www     IN      CNAME   abimanyu.D06.com.
 @       IN      AAAA    ::1
 " >/etc/bind/jarkom/abimanyu.D06.com
@@ -72,7 +72,7 @@ echo "
                             604800 )    ; Negative Cache TTL
 ;
 @       IN      NS      abimanyu.D06.com.
-@       IN      A       192.194.1.3     ; IP DNSMASTER
+@       IN      A       192.194.3.2     ; IP Abimanyu
 www     IN      CNAME   abimanyu.D06.com.
 parikesit IN    A       192.194.3.2     ; IP Abimanyu
 @       IN      AAAA    ::1
@@ -122,6 +122,7 @@ zone \"1.194.192.in-addr.arpa\" {
 " >/etc/bind/named.conf.local
 service bind9 restart
 
+# buat testing dns-slave
 service bind9 stop
 
 # No 7
@@ -137,13 +138,13 @@ echo "
                            2419200      ; Expire
                             604800 )    ; Negative Cache TTL
 ;
-@       IN      NS      abimanyu.D06.com.
-@       IN      A       192.194.1.3     ; IP DNSMASTER
-www     IN      CNAME   abimanyu.D06.com.
-parikesit IN    A       192.194.3.2     ; IP Abimanyu
-ns1	IN	A	192.194.1.2	; IP DNSSLAVE
-baratayuda IN	NS	ns1
-@       IN      AAAA    ::1
+@         IN      NS      abimanyu.D06.com.
+@         IN      A       192.194.1.3     ; IP DNSMASTER
+www       IN      CNAME   abimanyu.D06.com.
+parikesit IN      A       192.194.3.2     ; IP Abimanyu
+ns1	      IN	    A	      192.194.1.2	    ; IP DNSSLAVE
+baratayuda IN	    NS	    ns1
+@         IN      AAAA    ::1
 " >/etc/bind/jarkom/abimanyu.D06.com
 
 echo "
@@ -173,9 +174,8 @@ options {
     auth-nxdomain no;    # conform to RFC1035
     listen-on-v6 { any; };
 };
-" > /etc/bind/named.conf.options
+" >/etc/bind/named.conf.options
 
-nano /etc/bind/named.conf.local
 echo "
 zone \"abimanyu.D06.com\" {
     type master;
@@ -190,3 +190,6 @@ zone \"1.194.192.in-addr.arpa\" {
 " >/etc/bind/named.conf.local
 
 service bind9 restart
+
+# No 9
+apt-get install nginx -y
