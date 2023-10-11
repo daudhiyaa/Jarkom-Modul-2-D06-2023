@@ -26,3 +26,11 @@ nameserver 192.194.1.3 # IP DNSMASTER
 nameserver 192.194.1.2 # IP DNSSLAVE
 " >/etc/resolv.conf
 ping abimanyu.D06.com -c 3
+
+# No 7
+ping baratayuda.abimanyu.D06.com -c 3 atau
+ping www.baratayuda.abimanyu.D06.com -c 3
+
+# No 8
+ping rjp.baratayuda.abimanyu.D06.com -c 3 atau
+ping www.rjp.baratayuda.abimanyu.D06.com -c 3
