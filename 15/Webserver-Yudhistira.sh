@@ -35,3 +35,8 @@ echo -e '
   </header>
 </html>
 ' >/var/www/parikesit.abimanyu.D06/error/404.html
+
+echo "
+ErrorDocument 404 /error/404.html
+ErrorDocument 403 /error/403.html
+" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
