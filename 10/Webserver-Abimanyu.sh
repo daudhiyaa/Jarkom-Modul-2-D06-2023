@@ -6,7 +6,7 @@ server {
   root /var/www/jarkom;
 
   index index.php index.html index.htm;
-  server_name _;
+  server_name arjuna.D06.com;
 
   location / {
     try_files \$uri \$uri/ /index.php?\$query_string;
@@ -27,5 +27,11 @@ server {
 }
 " >/etc/nginx/sites-available/jarkom
 
-rm /etc/nginx/sites-enabled/default
+apt-get update && apt-get install wget && apt-get install unzip
+
+wget --no-check-certificate "https://drive.google.com/uc?export=download&id=17tAM_XDKYWDvF-JJix1x7txvTBEax7vX" -O /var/www/jarkom/arjuna.D06.com.zip
+
+unzip /var/www/jarkom/arjuna.D06.com.zip -d /var/www/jarkom/
+mv /var/www/jarkom/arjuna.yyy.com/index.php /var/www/jarkom/
+
 service nginx restart && nginx -t
