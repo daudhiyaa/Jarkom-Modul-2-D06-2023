@@ -16,11 +16,10 @@ cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/ab
 rm /etc/apache2/sites-available/000-default.conf
 
 echo -e '<VirtualHost *:80>
-  ServerAdmin webmaster@localhost
-  DocumentRoot /var/www/abimanyu.D06
-
   ServerName abimanyu.D06.com
   ServerAlias www.abimanyu.D06.com
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/abimanyu.D06
 
   ErrorLog ${APACHE_LOG_DIR}/error.log
   CustomLog ${APACHE_LOG_DIR}/access.log combined
