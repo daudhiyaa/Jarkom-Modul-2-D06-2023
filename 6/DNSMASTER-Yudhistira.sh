@@ -8,6 +8,11 @@ zone \"abimanyu.D06.com\" {
     file \"/etc/bind/jarkom/abimanyu.D06.com\";
 };
 
+zone \"arjuna.D06.com\" { 
+  type master; 
+  file \"/etc/bind/jarkom/arjuna.D06.com\";
+};
+
 zone \"1.194.192.in-addr.arpa\" {
   type master;
   file \"/etc/bind/jarkom/1.194.192.in-addr.arpa\"; 
