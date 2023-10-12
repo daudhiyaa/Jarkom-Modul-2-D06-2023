@@ -19,7 +19,7 @@ upstream webD06  {
 
 server {
 	listen 80;
-	server_name arjuna.D06.com;
+	server_name arjuna.D06.com www.arjuna.D06.com;
 	location / {
     proxy_pass http://webD06;
 	}
