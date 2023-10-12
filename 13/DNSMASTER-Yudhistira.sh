@@ -1,4 +1,4 @@
-# No 7
+# No 10
 echo ";
 ; BIND data file for local loopback interface
 ;
@@ -14,16 +14,8 @@ echo ";
 @       IN      A       192.194.3.2       ; IP Abimanyu
 www     IN      CNAME   abimanyu.D06.com.
 parikesit  IN   A       192.194.3.2       ; IP Abimanyu
+www.parikesit IN      CNAME   parikesit.abimanyu.D06.com.
 ns1     IN      A       192.194.1.3       ; IP DNSMASTER
 baratayuda IN   NS      ns1
 @       IN      AAAA    ::1
 " >/etc/bind/jarkom/abimanyu.D06.com
-
-echo 'options {
-  directory "/var/cache/bind";
-  allow-query{any;};
-  auth-nxdomain no;    # conform to RFC1035
-  listen-on-v6 { any; };
-};' >/etc/bind/named.conf.options
-
-service bind9 restart
