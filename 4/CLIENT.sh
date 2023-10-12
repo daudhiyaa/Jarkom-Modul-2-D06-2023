@@ -1,1 +1,1 @@
-ping parikesit.abimanyu.D06.com
+ping parikesit.abimanyu.D06.com -c 5

@@ -1,23 +1,7 @@
-echo "
-nameserver 192.168.122.1
-nameserver 192.194.1.3
-" >/etc/resolv.conf
-
-# No 9
-apt-get update && apt install nginx php php-fpm -y
-service nginx start
-service php7.0-fpm start
-
-mkdir /var/www/jarkom
-echo "
-<?php
-echo \"Halo, Kamu berada di Abimanyu\";
-?>
-" >/var/www/jarkom/index.php
-
+# No 10
 echo "
 server {
-  listen 80;
+  listen 8003;
 
   root /var/www/jarkom;
 
@@ -43,7 +27,5 @@ server {
 }
 " >/etc/nginx/sites-available/jarkom
 
-ln -s /etc/nginx/sites-available/jarkom /etc/nginx/sites-enabled
 rm /etc/nginx/sites-enabled/default
-service nginx restart
-nginx -t
+service nginx restart && nginx -t

@@ -9,7 +9,7 @@ zone \"abimanyu.D06.com\" {
 };
 
 zone \"1.194.192.in-addr.arpa\" {
-  type master; 
+  type master;
   file \"/etc/bind/jarkom/1.194.192.in-addr.arpa\"; 
 };
 " >/etc/bind/named.conf.local

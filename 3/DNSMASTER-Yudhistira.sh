@@ -2,7 +2,7 @@
 echo "zone \"abimanyu.D06.com\" { 
   type master; 
   file \"/etc/bind/jarkom/abimanyu.D06.com\"; 
-};" >/etc/bind/named.conf.local
+};" >>/etc/bind/named.conf.local
 
 cp /etc/bind/db.local /etc/bind/jarkom/abimanyu.D06.com
 

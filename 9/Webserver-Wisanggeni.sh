@@ -1,4 +1,7 @@
-echo nameserver 192.168.122.1 >/etc/resolv.conf
+echo "
+nameserver 192.168.122.1
+nameserver 192.194.1.3
+" >/etc/resolv.conf
 
 # No 9
 apt-get update && apt install nginx php php-fpm -y
@@ -19,7 +22,7 @@ server {
   root /var/www/jarkom;
 
   index index.php index.html index.htm;
-  server_name abimanyu.D06.com;
+  server_name arjuna.D06.com;
 
   location / {
     try_files \$uri \$uri/ /index.php?\$query_string;
@@ -41,5 +44,6 @@ server {
 " >/etc/nginx/sites-available/jarkom
 
 ln -s /etc/nginx/sites-available/jarkom /etc/nginx/sites-enabled
+rm /etc/nginx/sites-enabled/default
 service nginx restart
 nginx -t
