@@ -1102,10 +1102,90 @@ Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password
 
 **Jawab**
 
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+echo -e '<VirtualHost *:14000 *:14400>
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/rjp.baratayuda.abimanyu.D06
+  ServerName rjp.baratayuda.abimanyu.D06.com
+  ServerAlias www.rjp.baratayuda.abimanyu.D06.com
+
+  <Directory /var/www/rjp.baratayuda.abimanyu.D06>
+          AuthType Basic
+          AuthName "Restricted Content"
+          AuthUserFile /etc/apache2/.htpasswd
+          Require valid-user
+  </Directory>
+
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+
+  ErrorLog ${APACHE_LOG_DIR}/error.log
+  CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>' > /etc/apache2/sites-available/rjp.baratayuda.abimanyu.D06.com.conf
+
+a2ensite rjp.baratayuda.abimanyu.D06.com.conf
+service apache2 restart
+```
+Tuliskan command berikut juga di worker `Abimanyu` untuk menyetting username dan password
+```
+htpasswd -c -b /etc/apache2/.htpasswd Wayang baratayudaD06
+```
+- `-c` adalah `created`
+- `-b` adalah `bcrypy` untuk meng-hashing password
+
+Selanjutnya dilakukan pengecekan pada `Client`
+- Client Nakula & Sadewa
+```
+lynx rjp.baratayuda.abimanyu.D06.com:14000
+lynx rjp.baratayuda.abimanyu.D06.com:14400
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-23.png)
+
+![Alt text](images/image-24.png)
+
+![Alt text](images/image-25.png)
+
 ## No 19
 Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
 **Jawab**
+
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+echo -e '<VirtualHost *:80>
+    ServerAdmin webmaster@abimanyu.D06.com
+    DocumentRoot /var/www/html
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    Redirect / http://www.abimanyu.D06.com/
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+apache2ctl configtest
+service apache2 restart
+```
+Selanjutnya dilakukan pengecekan pada `Client` menggunakan IP dari worker `Abimanyu`
+- Client Nakula & Sadewa
+```
+lynx 192.194.3.2
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-26.png)
 
 ## No 20
 Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
