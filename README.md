@@ -524,9 +524,9 @@ ping www.rjp.baratayuda.abimanyu.D06.com -c 3
 ```
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
-![Alt text](images/image-8.png)
-
 `SS Hasil`
+
+![Alt text](images/image-8.png)
 
 ## No 9
 Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
@@ -733,5 +733,310 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 ## No 11
 Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
+
+**Jawab**
+
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+apt-get install apache2 -y
+apache2 -v
+service apache2 start
+
+apt-get install php -y
+php -v
+
+apt-get install libapache2-mod-php7.0 -y
+
+mkdir /var/www/abimanyu.D06
+
+cp /etc/apache2/sites-available/000-default.conf /etc/apache2/sites-available/abimanyu.D06.com.conf
+rm /etc/apache2/sites-available/000-default.conf
+
+echo "<VirtualHost *:80>
+  ServerName abimanyu.D06.com
+  ServerAlias www.abimanyu.D06.com
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/abimanyu.D06
+
+  ErrorLog \${APACHE_LOG_DIR}/error.log
+  CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>" >/etc/apache2/sites-available/abimanyu.D06.com.conf
+
+wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1a4V23hwK9S7hQEDEcv9FL14UkkrHc-Zc" -O /var/www/abimanyu.D06/abimanyu.D06.com.zip
+
+unzip /var/www/abimanyu.D06/abimanyu.D06.com.zip -d /var/www/abimanyu.D06/
+
+mv /var/www/abimanyu.D06/abimanyu.yyy.com/home.html /var/www/abimanyu.D06/
+mv /var/www/abimanyu.D06/abimanyu.yyy.com/abimanyu.webp /var/www/abimanyu.D06/
+mv /var/www/abimanyu.D06/abimanyu.yyy.com/index.php /var/www/abimanyu.D06/
+
+a2ensite abimanyu.D06.com.conf
+service apache2 reload
+service apache2 restart
+```
+
+- Client Nakula & Sadewa
+```
+lynx abimanyu.D06.com
+lynx abimanyu.D06.com/index.php/home
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-13.png)
+
+## No 12
+Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
+
+**Jawab**
+
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+echo "
+<Directory /var/www/abimanyu.D06/index.php/home>
+    Options +Indexes
+</Directory>
+
+Alias \"/home\" \"/var/www/abimanyu.D06/index.php/home\"
+" >>/etc/apache2/sites-available/abimanyu.D06.com.conf
+service apache2 restart
+```
+
+- Client Nakula & Sadewa
+```
+lynx abimanyu.D06.com
+lynx abimanyu.D06.com/index.php/home
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-14.png)
+
+## No 13
+Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
+
+**Jawab**
+
+Setup terlebih dahulu di `DNSMASTER`
+
+- DNSMASTER-Yudhistira
+```
+echo ";
+; BIND data file for local loopback interface
+;
+\$TTL    604800
+@       IN      SOA     abimanyu.D06.com. root.abimanyu.D06.com. (
+                     2023100101         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@       IN      NS      abimanyu.D06.com.
+@       IN      A       192.194.3.2       ; IP Abimanyu
+www     IN      CNAME   abimanyu.D06.com.
+parikesit  IN   A       192.194.3.2       ; IP Abimanyu
+www.parikesit IN      CNAME   parikesit.abimanyu.D06.com.
+ns1     IN      A       192.194.1.3       ; IP DNSMASTER
+baratayuda IN   NS      ns1
+@       IN      AAAA    ::1
+" >/etc/bind/jarkom/abimanyu.D06.com
+```
+
+Lalu tuliskan command berikut di worker `Abimanyu`
+- Abimanyu
+```
+mkdir /var/www/parikesit.abimanyu.D06
+
+echo "
+<VirtualHost *:80>
+  ServerName parikesit.abimanyu.D06.com
+  # ServerAlias www.parikesit.abimanyu.D06.com
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.D06
+
+  ErrorLog \${APACHE_LOG_DIR}/error.log
+  CustomLog \${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>" >/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+
+wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1LdbYntiYVF_NVNgJis1GLCLPEGyIOreS" -O /var/www/parikesit.abimanyu.D06/parikesit.abimanyu.D06.com.zip
+
+unzip /var/www/parikesit.abimanyu.D06/parikesit.abimanyu.D06.com.zip -d /var/www/parikesit.abimanyu.D06/
+
+mv /var/www/parikesit.abimanyu.D06/parikesit.abimanyu.yyy.com/error /var/www/parikesit.abimanyu.D06/
+mv /var/www/parikesit.abimanyu.D06/parikesit.abimanyu.yyy.com/public /var/www/parikesit.abimanyu.D06/
+
+a2ensite parikesit.abimanyu.D06.com.conf
+service apache2 reload
+service apache2 restart
+```
+
+- Client Nakula & Sadewa
+```
+lynx parikesit.abimanyu.D06.com
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-15.png)
+
+## No 14
+Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
+
+**Jawab**
+
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+mkdir /var/www/parikesit.abimanyu.D06/secret
+cp /var/www/parikesit.abimanyu.D06/error/403.html /var/www/parikesit.abimanyu.D06/secret/403.html
+
+echo "
+<Directory /var/www/parikesit.abimanyu.D06/public>
+  Options +Indexes
+</Directory>
+<Directory /var/www/parikesit.abimanyu.D06/secret>
+  Options -Indexes
+</Directory>
+" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+```
+
+- Client Nakula & Sadewa
+```
+lynx parikesit.abimanyu.D06.com/public
+lynx parikesit.abimanyu.D06.com/secret
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-16.png)
+
+![Alt text](images/image-17.png)
+
+## No 15
+Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
+
+**Jawab**
+
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+echo -e '
+<html
+  style="
+    background-image: url('nyee.jpg');
+    height: 100;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: 100%;
+    width: 100%;
+  "
+>
+  <header>
+    <h1 style="text-align: center; color: white">
+      lmao ERROR 403 (Forbidden) BRO dari kelompok D06
+    </h1>
+  </header>
+</html>
+' >/var/www/parikesit.abimanyu.D06/error/403.html
+
+echo -e '
+<html
+  style="
+    background-image: url('nyee.jpg');
+    height: 100;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+    height: 100%;
+    width: 100%;
+  "
+>
+  <header>
+    <h1 style="text-align: center; color: white">
+      lmao ERROR 404 (Forbidden) BRO dari kelompok D06
+    </h1>
+  </header>
+</html>
+' >/var/www/parikesit.abimanyu.D06/error/404.html
+
+echo "
+ErrorDocument 404 /error/404.html
+ErrorDocument 403 /error/403.html
+" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+```
+
+- Client Nakula & Sadewa
+```
+lynx parikesit.abimanyu.D06.com/error          # untuk cek 403
+lynx parikesit.abimanyu.D06.com/error/404.html # untuk cek 404
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-18.png)
+
+![Alt text](images/image-19.png)
+
+## No 16
+Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi 
+www.parikesit.abimanyu.yyy.com/js
+
+**Jawab**
+
+Setup terlebih dahulu di worker `Abimanyu`
+
+- Abimanyu
+```
+echo "
+Alias \"/js\" \"/var/www/parikesit.abimanyu.D06/public/js\"
+" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+service apache2 restart
+```
+
+- Client Nakula & Sadewa
+```
+lynx parikesit.abimanyu.D06.com/js
+lynx www.parikesit.abimanyu.D06.com/js
+```
+
+Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
+
+`SS Hasil`
+
+![Alt text](images/image-20.png)
+
+## No 17
+Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
+
+**Jawab**
+
+## No 18
+Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
+
+**Jawab**
+
+## No 19
+Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
+
+**Jawab**
+
+## No 20
+Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
 
 **Jawab**
