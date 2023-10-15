@@ -3,7 +3,7 @@ mkdir /var/www/parikesit.abimanyu.D06
 echo "
 <VirtualHost *:80>
   ServerName parikesit.abimanyu.D06.com
-  # ServerAlias www.parikesit.abimanyu.D06.com
+  ServerAlias www.parikesit.abimanyu.D06.com
   ServerAdmin webmaster@localhost
   DocumentRoot /var/www/parikesit.abimanyu.D06
 
