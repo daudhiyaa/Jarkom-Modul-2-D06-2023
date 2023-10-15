@@ -1249,10 +1249,4 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
 
-not-abimanyu.png, abimanyu-student.jpg, abimanyu.png
-
 ![Alt text](images/image-27.png)
-
-notabimanyujustmuseum.177013
-
-![Alt text](images/image-28.png)
