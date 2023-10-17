@@ -8,6 +8,7 @@
 | Daud Dhiya' Rozaan                 | 5025211021 |
 
 ## No 1
+
 Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjuna merupakan Load Balancer yang terdiri dari beberapa Web Server yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Buatlah topologi dengan pembagian sebagai berikut.
 
 **Jawab**
@@ -17,7 +18,9 @@ Yudhistira akan digunakan sebagai DNS Master, Werkudara sebagai DNS Slave, Arjun
 ![Alt text](images/image-1.png)
 
 ### Network Configuration
+
 - Pandudewanata
+
 ```
 auto eth0
 iface eth0 inet dhcp
@@ -37,7 +40,9 @@ iface eth3 inet static
 	address 192.194.3.1
 	netmask 255.255.255.0
 ```
+
 - DNSSLAVE-Werkudara
+
 ```
 auto eth0
 iface eth0 inet static
@@ -45,7 +50,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.1.1
 ```
+
 - DNSMASTER-Yudhistira
+
 ```
 auto eth0
 iface eth0 inet static
@@ -53,7 +60,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.1.1
 ```
+
 - Client-Nakula
+
 ```
 auto eth0
 iface eth0 inet static
@@ -61,7 +70,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.2.1
 ```
+
 - Client-Sadewa
+
 ```
 auto eth0
 iface eth0 inet static
@@ -69,7 +80,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.2.1
 ```
+
 - Abimanyu
+
 ```
 auto eth0
 iface eth0 inet static
@@ -77,7 +90,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.3.1
 ```
+
 - Prabukusuma
+
 ```
 auto eth0
 iface eth0 inet static
@@ -85,7 +100,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.3.1
 ```
+
 - Wisanggeni
+
 ```
 auto eth0
 iface eth0 inet static
@@ -93,7 +110,9 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.3.1
 ```
+
 - LB-Arjuna
+
 ```
 auto eth0
 iface eth0 inet static
@@ -101,31 +120,37 @@ iface eth0 inet static
 	netmask 255.255.255.0
 	gateway 192.194.3.1
 ```
+
 Setelah melakukan konfigurasi, tulis command berikut di `Pandudewanata`
+
 - Pandudewanata
-```
+
+```sh
 iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE -s 192.194.0.0/16
 ```
-Lalu tulis command berikut ke semua node
-```
+
+Lalu tulis command berikut ke semua node ubuntu
+
+```sh
 echo nameserver 192.168.122.1 > /etc/resolv.conf
 ```
 
-`SS Hasil`??
-
 ## No 2
+
 Buatlah website utama pada node arjuna dengan akses ke arjuna.yyy.com dengan alias www.arjuna.yyy.com dengan yyy merupakan kode kelompok.
 
 **Jawab**
 
 Setup terlebih dahulu di `DNSMASTER`
+
 - DNSMASTER-Yudhistira
-```
+
+```sh
 apt-get update
 apt-get install bind9 -y
 
-echo "zone \"arjuna.D06.com\" { 
-  type master; 
+echo "zone \"arjuna.D06.com\" {
+  type master;
   file \"/etc/bind/jarkom/arjuna.D06.com\";
 };" >/etc/bind/named.conf.local
 
@@ -152,9 +177,12 @@ www     IN      CNAME   arjuna.D06.com.
 
 service bind9 restart
 ```
+
 Tuliskan command berikut pada `Client`
+
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 echo "
 # nameserver 192.168.122.1 # IP Pandudewanata
 nameserver 192.194.1.3 # IP DNSMASTER
@@ -171,6 +199,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-2.png)
 
 ## No 3
+
 Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses ke abimanyu.yyy.com dan alias www.abimanyu.yyy.com.
 
 **Jawab**
@@ -178,10 +207,11 @@ Dengan cara yang sama seperti soal nomor 2, buatlah website utama dengan akses k
 Setup terlebih dahulu di `DNSMASTER`
 
 - DNSMASTER-Yudhistira
-```
-echo "zone \"abimanyu.D06.com\" { 
-  type master; 
-  file \"/etc/bind/jarkom/abimanyu.D06.com\"; 
+
+```sh
+echo "zone \"abimanyu.D06.com\" {
+  type master;
+  file \"/etc/bind/jarkom/abimanyu.D06.com\";
 };" >>/etc/bind/named.conf.local
 
 cp /etc/bind/db.local /etc/bind/jarkom/abimanyu.D06.com
@@ -206,12 +236,16 @@ www     IN      CNAME   abimanyu.D06.com.
 
 service bind9 restart
 ```
+
 Tuliskan command berikut pada `Client`
+
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 ping abimanyu.D06.com -c 5
 ping www.abimanyu.D06.com -c 5
 ```
+
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
@@ -219,6 +253,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-3.png)
 
 ## No 4
+
 Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain parikesit.abimanyu.yyy.com yang diatur DNS-nya di Yudhistira dan mengarah ke Abimanyu.
 
 **Jawab**
@@ -226,7 +261,8 @@ Kemudian, karena terdapat beberapa web yang harus di-deploy, buatlah subdomain p
 Setup terlebih dahulu di `DNSMASTER`
 
 - DNSMASTER-Yudhistira
-```
+
+```sh
 echo "
 ;
 ; BIND data file for local loopback interface
@@ -250,10 +286,13 @@ service bind9 restart
 ```
 
 Tuliskan command berikut pada `Client`
+
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 ping parikesit.abimanyu.D06.com -c 5
 ```
+
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
@@ -269,10 +308,11 @@ Buat juga reverse domain untuk domain utama. (Abimanyu saja yang direverse)
 Setup terlebih dahulu di `DNSMASTER`
 
 - DNSMASTER-Yudhistira
-```
+
+```sh
 echo "zone \"3.194.192.in-addr.arpa\" {
-  type master; 
-  file \"/etc/bind/jarkom/3.194.192.in-addr.arpa\"; 
+  type master;
+  file \"/etc/bind/jarkom/3.194.192.in-addr.arpa\";
 };" >>/etc/bind/named.conf.local
 
 cp /etc/bind/db.local /etc/bind/jarkom/3.194.192.in-addr.arpa
@@ -297,8 +337,10 @@ service bind9 restart
 ```
 
 Tuliskan command berikut pada `Client`
+
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 echo "
 nameserver 192.168.122.1 # IP Pandudewanata
 # nameserver 192.194.1.3 # IP DNSMASTER
@@ -314,6 +356,7 @@ nameserver 192.194.1.3 # IP DNSMASTER
 
 host -t PTR "192.194.3.2" # IP Abimanyu
 ```
+
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
@@ -329,7 +372,8 @@ Agar dapat tetap dihubungi ketika DNS Server Yudhistira bermasalah, buat juga We
 Setup terlebih dahulu di `DNSMASTER`
 
 - DNSMASTER-Yudhistira
-```
+
+```sh
 # No 6
 echo "
 zone \"abimanyu.D06.com\" {
@@ -340,14 +384,14 @@ zone \"abimanyu.D06.com\" {
     file \"/etc/bind/jarkom/abimanyu.D06.com\";
 };
 
-zone \"arjuna.D06.com\" { 
-  type master; 
+zone \"arjuna.D06.com\" {
+  type master;
   file \"/etc/bind/jarkom/arjuna.D06.com\";
 };
 
 zone \"1.194.192.in-addr.arpa\" {
   type master;
-  file \"/etc/bind/jarkom/1.194.192.in-addr.arpa\"; 
+  file \"/etc/bind/jarkom/1.194.192.in-addr.arpa\";
 };
 " >/etc/bind/named.conf.local
 
@@ -357,7 +401,8 @@ service bind9 restart
 Lalu setup di `DNSSLAVE`
 
 - DNSSLAVE-Werkudara
-```
+
+```sh
 echo nameserver 192.168.122.1 >/etc/resolv.conf
 
 apt-get update
@@ -376,21 +421,26 @@ service bind9 restart
 Untuk melakukan pengecekan apakah berhasil atau tidak, stop dulu bind9 di `DNSMASTER`, lalu tuliskan command berikut di `Client`
 
 - DNSMASTER-Yudhistira
-```
+
+```sh
 service bind9 stop
 ```
 
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 echo "
 nameserver 192.194.1.3 # IP DNSMASTER
 nameserver 192.194.1.2 # IP DNSSLAVE
 " >/etc/resolv.conf
 ```
+
 Pengecekan pada `Client`
-```
+
+```sh
 ping abimanyu.D06.com -c 3
 ```
+
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
@@ -398,6 +448,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-6.png)
 
 ## No 7
+
 Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatlah subdomain khusus untuk perang yaitu baratayuda.abimanyu.yyy.com dengan alias www.baratayuda.abimanyu.yyy.com yang didelegasikan dari Yudhistira ke Werkudara dengan IP menuju ke Abimanyu dalam folder Baratayuda.
 
 **Jawab**
@@ -405,7 +456,8 @@ Seperti yang kita tahu karena banyak sekali informasi yang harus diterima, buatl
 Setup terlebih dahulu di `DNSMASTER`
 
 - DNSMASTER-Yudhistira
-```
+
+```sh
 echo ";
 ; BIND data file for local loopback interface
 ;
@@ -439,7 +491,8 @@ service bind9 restart
 Lalu setup di `DNSSLAVE`
 
 - DNSSLAVE-Werkudara
-```
+
+```sh
 echo 'options {
         directory "/var/cache/bind";
         allow-query{any;};
@@ -475,11 +528,14 @@ service bind9 restart
 ```
 
 Tuliskan command berikut pada `Client`
+
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 ping baratayuda.abimanyu.D06.com -c 3
 ping www.baratayuda.abimanyu.D06.com -c 3
 ```
+
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
@@ -487,6 +543,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-7.png)
 
 ## No 8
+
 Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdomain melalui Werkudara dengan akses rjp.baratayuda.abimanyu.yyy.com dengan alias www.rjp.baratayuda.abimanyu.yyy.com yang mengarah ke Abimanyu.
 
 **Jawab**
@@ -494,7 +551,8 @@ Untuk informasi yang lebih spesifik mengenai Ranjapan Baratayuda, buatlah subdom
 Setup terlebih dahulu di `DNSSLAVE`
 
 - DNSSLAVE-Werkudara
-```
+
+```sh
 echo '
 ;
 ; BIND data file for local loopback interface
@@ -519,11 +577,14 @@ service bind9 restart
 ```
 
 Tuliskan command berikut pada `Client`
+
 - Client-Nakula & Client-Sadewa
-```
+
+```sh
 ping rjp.baratayuda.abimanyu.D06.com -c 3
 ping www.rjp.baratayuda.abimanyu.D06.com -c 3
 ```
+
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
@@ -531,6 +592,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-8.png)
 
 ## No 9
+
 Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggunakan nginx sebagai webserver) yaitu Prabakusuma, Abimanyu, dan Wisanggeni. Lakukan deployment pada masing-masing worker.
 
 **Jawab**
@@ -538,7 +600,8 @@ Arjuna merupakan suatu Load Balancer Nginx dengan tiga worker (yang juga menggun
 Pada `LB-ARJUNA`, kita terlebih dahulu menuliskan command berikut
 
 - LB-ARJUNA
-```
+
+```sh
 echo "
 nameserver 192.168.122.1
 nameserver 192.194.1.3
@@ -552,7 +615,8 @@ service nginx start
 Selanjutnya pada masing-masing worker, tuliskan command berikut
 
 - Abimanyu, Prabakusuma, Wisanggeni
-```
+
+```sh
 echo "
 nameserver 192.168.122.1
 nameserver 192.194.1.3
@@ -604,7 +668,8 @@ nginx -t
 ```
 
 Selanjutnya, kembali lagi ke `LB-ARJUNA` dan tuliskan command berikut
-```
+
+```sh
 echo "
 # Default menggunakan Round Robin
 upstream webD06  {
@@ -628,12 +693,15 @@ service nginx restart && nginx -t
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 apt-get update
 apt-get install lynx -y
 ```
+
 Pengecekan pada `Client`
-```
+
+```sh
 lynx http://arjuna.D06.com
 ```
 
@@ -644,6 +712,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-9.png)
 
 ## No 10
+
 Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan server_name pada soal nomor 1. Untuk melakukan pengecekan akses alamat web tersebut kemudian pastikan worker yang digunakan untuk menangani permintaan akan berganti ganti secara acak. Untuk webserver di masing-masing worker wajib berjalan di port 8001-8003. Contoh
 
     - Prabakusuma:8001
@@ -655,7 +724,8 @@ Kemudian gunakan algoritma Round Robin untuk Load Balancer pada Arjuna. Gunakan 
 Setup terlebih dahulu pada bagian `LB-ARJUNA`
 
 - LB-ARJUNA
-```
+
+```sh
 echo "
 # Default menggunakan Round Robin
 upstream webD06  {
@@ -679,7 +749,7 @@ service nginx restart
 
 Berikutnya, tulisakan command berikut pada tiap worker, dengan keterangan X adalah angka terakhir dari port masing-masing worker
 
-```
+```sh
 echo "
 server {
   listen 800X;
@@ -719,7 +789,8 @@ service nginx restart && nginx -t
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx http://arjuna.D06.com
 ```
 
@@ -734,6 +805,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-12.png)
 
 ## No 11
+
 Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abimanyu dengan web server www.abimanyu.yyy.com. Pertama dibutuhkan web server dengan DocumentRoot pada /var/www/abimanyu.yyy
 
 **Jawab**
@@ -741,7 +813,8 @@ Selain menggunakan Nginx, lakukan konfigurasi Apache Web Server pada worker Abim
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 apt-get install apache2 -y
 apache2 -v
 service apache2 start
@@ -780,7 +853,8 @@ service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx abimanyu.D06.com
 lynx abimanyu.D06.com/index.php/home
 ```
@@ -792,6 +866,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-13.png)
 
 ## No 12
+
 Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abimanyu.yyy.com/home.
 
 **Jawab**
@@ -799,7 +874,8 @@ Setelah itu ubahlah agar url www.abimanyu.yyy.com/index.php/home menjadi www.abi
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 echo "<VirtualHost *:80>
     ServerName abimanyu.D06.com
     ServerAlias www.abimanyu.D06.com
@@ -808,18 +884,19 @@ echo "<VirtualHost *:80>
 
     ErrorLog \${APACHE_LOG_DIR}/error.log
     CustomLog \${APACHE_LOG_DIR}/access.log combined
-    
+
     <Directory /var/www/abimanyu.D06/index.php/home>
         Options +Indexes
     </Directory>
-    
+
     Alias \"/home\" \"/var/www/abimanyu.D06/index.php/home\"
 </VirtualHost>" >/etc/apache2/sites-available/abimanyu.D06.com.conf
 service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx abimanyu.D06.com
 lynx abimanyu.D06.com/index.php/home
 ```
@@ -831,6 +908,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-14.png)
 
 ## No 13
+
 Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan pada /var/www/parikesit.abimanyu.yyy
 
 **Jawab**
@@ -838,7 +916,8 @@ Selain itu, pada subdomain www.parikesit.abimanyu.yyy.com, DocumentRoot disimpan
 Setup terlebih dahulu di `DNSMASTER`
 
 - DNSMASTER-Yudhistira
-```
+
+```sh
 echo ";
 ; BIND data file for local loopback interface
 ;
@@ -862,8 +941,10 @@ baratayuda IN   NS      ns1
 ```
 
 Lalu tuliskan command berikut di worker `Abimanyu`
+
 - Abimanyu
-```
+
+```sh
 mkdir /var/www/parikesit.abimanyu.D06
 
 echo "
@@ -890,7 +971,8 @@ service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx parikesit.abimanyu.D06.com
 ```
 
@@ -901,6 +983,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-15.png)
 
 ## No 14
+
 Pada subdomain tersebut folder /public hanya dapat melakukan directory listing sedangkan pada folder /secret tidak dapat diakses (403 Forbidden).
 
 **Jawab**
@@ -908,7 +991,8 @@ Pada subdomain tersebut folder /public hanya dapat melakukan directory listing s
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 mkdir /var/www/parikesit.abimanyu.D06/secret
 cp /var/www/parikesit.abimanyu.D06/error/403.html /var/www/parikesit.abimanyu.D06/secret/403.html
 
@@ -921,7 +1005,7 @@ echo "
 
   ErrorLog \${APACHE_LOG_DIR}/error.log
   CustomLog \${APACHE_LOG_DIR}/access.log combined
-  
+
   <Directory /var/www/parikesit.abimanyu.D06/public>
     Options +Indexes
   </Directory>
@@ -943,7 +1027,8 @@ service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx parikesit.abimanyu.D06.com/public
 lynx parikesit.abimanyu.D06.com/secret
 ```
@@ -957,6 +1042,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-17.png)
 
 ## No 15
+
 Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode pada Apache. Error kode yang perlu diganti adalah 404 Not Found dan 403 Forbidden.
 
 **Jawab**
@@ -964,7 +1050,8 @@ Buatlah kustomisasi halaman error pada folder /error untuk mengganti error kode 
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 echo -e '
 <html
   style="
@@ -1012,7 +1099,7 @@ echo "
 
   ErrorLog \${APACHE_LOG_DIR}/error.log
   CustomLog \${APACHE_LOG_DIR}/access.log combined
-  
+
   <Directory /var/www/parikesit.abimanyu.D06/public>
     Options +Indexes
   </Directory>
@@ -1028,7 +1115,10 @@ echo "
   <Directory /var/www/parikesit.abimanyu.D06/secret>
     Options -Indexes
   </Directory>
-  
+  <Directory /var/www/parikesit.abimanyu.D06/error>
+    Options -Indexes
+  </Directory>
+
   ErrorDocument 404 /error/404.html
   ErrorDocument 403 /error/403.html
 </VirtualHost>" >/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
@@ -1037,7 +1127,8 @@ service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```shsh
 lynx parikesit.abimanyu.D06.com/error          # untuk cek 403
 lynx parikesit.abimanyu.D06.com/error/linkacak # untuk cek 404
 ```
@@ -1046,12 +1137,13 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 
 `SS Hasil`
 
-![Alt text](images/image-18.png)
+![Alt text](images/image.png)
 
 ![Alt text](images/image-19.png)
 
 ## No 16
-Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi 
+
+Buatlah suatu konfigurasi virtual host agar file asset www.parikesit.abimanyu.yyy.com/public/js menjadi
 www.parikesit.abimanyu.yyy.com/js
 
 **Jawab**
@@ -1059,7 +1151,8 @@ www.parikesit.abimanyu.yyy.com/js
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 echo "
 <VirtualHost *:80>
   ServerName parikesit.abimanyu.D06.com
@@ -1069,7 +1162,7 @@ echo "
 
   ErrorLog \${APACHE_LOG_DIR}/error.log
   CustomLog \${APACHE_LOG_DIR}/access.log combined
-  
+
   <Directory /var/www/parikesit.abimanyu.D06/public>
     Options +Indexes
   </Directory>
@@ -1085,10 +1178,13 @@ echo "
   <Directory /var/www/parikesit.abimanyu.D06/secret>
     Options -Indexes
   </Directory>
-  
+  <Directory /var/www/parikesit.abimanyu.D06/error>
+    Options -Indexes
+  </Directory>
+
   ErrorDocument 404 /error/404.html
   ErrorDocument 403 /error/403.html
-  
+
   Alias \"/js\" \"/var/www/parikesit.abimanyu.D06/public/js\"
 </VirtualHost>" >/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
 
@@ -1096,7 +1192,8 @@ service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx parikesit.abimanyu.D06.com/js
 lynx www.parikesit.abimanyu.D06.com/js
 ```
@@ -1108,6 +1205,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-20.png)
 
 ## No 17
+
 Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya dapat diakses melalui port 14000 dan 14400.
 
 **Jawab**
@@ -1115,7 +1213,8 @@ Agar aman, buatlah konfigurasi agar www.rjp.baratayuda.abimanyu.yyy.com hanya da
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 mkdir /var/www/rjp.baratayuda.abimanyu.D06
 
 echo -e '<VirtualHost *:14000 *:14400>
@@ -1166,7 +1265,8 @@ service apache2 restart
 ```
 
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx rjp.baratayuda.abimanyu.D06.com:14000
 lynx rjp.baratayuda.abimanyu.D06.com:14400
 ```
@@ -1184,6 +1284,7 @@ Selain port 14400 dan 14000
 ![Alt text](images/image-22.png)
 
 ## No 18
+
 Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password “baratayudayyy” dengan yyy merupakan kode kelompok. Letakkan DocumentRoot pada /var/www/rjp.baratayuda.abimanyu.yyy.
 
 **Jawab**
@@ -1191,7 +1292,8 @@ Untuk mengaksesnya buatlah autentikasi username berupa “Wayang” dan password
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 echo -e '<VirtualHost *:14000 *:14400>
   ServerAdmin webmaster@localhost
   DocumentRoot /var/www/rjp.baratayuda.abimanyu.D06
@@ -1215,16 +1317,21 @@ echo -e '<VirtualHost *:14000 *:14400>
 a2ensite rjp.baratayuda.abimanyu.D06.com.conf
 service apache2 restart
 ```
+
 Tuliskan command berikut juga di worker `Abimanyu` untuk menyetting username dan password
-```
+
+```sh
 htpasswd -c -b /etc/apache2/.htpasswd Wayang baratayudaD06
 ```
+
 - `-c` adalah `created`
 - `-b` adalah `bcrypy` untuk meng-hashing password
 
 Selanjutnya dilakukan pengecekan pada `Client`
+
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx rjp.baratayuda.abimanyu.D06.com:14000
 lynx rjp.baratayuda.abimanyu.D06.com:14400
 ```
@@ -1240,6 +1347,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-25.png)
 
 ## No 19
+
 Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihkan ke www.abimanyu.yyy.com (alias)
 
 **Jawab**
@@ -1247,7 +1355,8 @@ Buatlah agar setiap kali mengakses IP dari Abimanyu akan secara otomatis dialihk
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 echo -e '<VirtualHost *:80>
     ServerAdmin webmaster@abimanyu.D06.com
     DocumentRoot /var/www/html
@@ -1261,9 +1370,12 @@ echo -e '<VirtualHost *:80>
 apache2ctl configtest
 service apache2 restart
 ```
+
 Selanjutnya dilakukan pengecekan pada `Client` menggunakan IP dari worker `Abimanyu`
+
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx 192.194.3.2
 ```
 
@@ -1274,6 +1386,7 @@ Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
 ![Alt text](images/image-26.png)
 
 ## No 20
+
 Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan banyak gambar gambar random, maka ubahlah request gambar yang memiliki substring “abimanyu” akan diarahkan menuju abimanyu.png.
 
 **Jawab**
@@ -1281,7 +1394,8 @@ Karena website www.parikesit.abimanyu.yyy.com semakin banyak pengunjung dan bany
 Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
-```
+
+```sh
 a2enmod rewrite
 
 echo 'RewriteEngine On
@@ -1322,9 +1436,12 @@ echo -e '<VirtualHost *:80>
 
 service apache2 restart
 ```
+
 Selanjutnya dilakukan pengecekan pada `Client`
+
 - Client Nakula & Sadewa
-```
+
+```sh
 lynx parikesit.abimanyu.D06.com/public/images/not-abimanyu.png
 lynx parikesit.abimanyu.D06.com/public/images/abimanyu-student.jpg
 lynx parikesit.abimanyu.D06.com/public/images/abimanyu.png
