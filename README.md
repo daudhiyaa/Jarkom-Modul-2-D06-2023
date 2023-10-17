@@ -358,6 +358,8 @@ Lalu setup di `DNSSLAVE`
 
 - DNSSLAVE-Werkudara
 ```
+echo nameserver 192.168.122.1 >/etc/resolv.conf
+
 apt-get update
 apt-get install bind9 -y
 
@@ -798,13 +800,21 @@ Setup terlebih dahulu di worker `Abimanyu`
 
 - Abimanyu
 ```
-echo "
-<Directory /var/www/abimanyu.D06/index.php/home>
-    Options +Indexes
-</Directory>
+echo "<VirtualHost *:80>
+    ServerName abimanyu.D06.com
+    ServerAlias www.abimanyu.D06.com
+    ServerAdmin webmaster@localhost
+    DocumentRoot /var/www/abimanyu.D06
 
-Alias \"/home\" \"/var/www/abimanyu.D06/index.php/home\"
-" >>/etc/apache2/sites-available/abimanyu.D06.com.conf
+    ErrorLog \${APACHE_LOG_DIR}/error.log
+    CustomLog \${APACHE_LOG_DIR}/access.log combined
+    
+    <Directory /var/www/abimanyu.D06/index.php/home>
+        Options +Indexes
+    </Directory>
+    
+    Alias \"/home\" \"/var/www/abimanyu.D06/index.php/home\"
+</VirtualHost>" >/etc/apache2/sites-available/abimanyu.D06.com.conf
 service apache2 restart
 ```
 
@@ -859,7 +869,7 @@ mkdir /var/www/parikesit.abimanyu.D06
 echo "
 <VirtualHost *:80>
   ServerName parikesit.abimanyu.D06.com
-  # ServerAlias www.parikesit.abimanyu.D06.com
+  ServerAlias www.parikesit.abimanyu.D06.com
   ServerAdmin webmaster@localhost
   DocumentRoot /var/www/parikesit.abimanyu.D06
 
@@ -903,13 +913,33 @@ mkdir /var/www/parikesit.abimanyu.D06/secret
 cp /var/www/parikesit.abimanyu.D06/error/403.html /var/www/parikesit.abimanyu.D06/secret/403.html
 
 echo "
-<Directory /var/www/parikesit.abimanyu.D06/public>
-  Options +Indexes
-</Directory>
-<Directory /var/www/parikesit.abimanyu.D06/secret>
-  Options -Indexes
-</Directory>
-" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+<VirtualHost *:80>
+  ServerName parikesit.abimanyu.D06.com
+  ServerAlias www.parikesit.abimanyu.D06.com
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.D06
+
+  ErrorLog \${APACHE_LOG_DIR}/error.log
+  CustomLog \${APACHE_LOG_DIR}/access.log combined
+  
+  <Directory /var/www/parikesit.abimanyu.D06/public>
+    Options +Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/js>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/css>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/images>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/secret>
+    Options -Indexes
+  </Directory>
+</VirtualHost>" >/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+
+service apache2 restart
 ```
 
 - Client Nakula & Sadewa
@@ -967,22 +997,49 @@ echo -e '
 >
   <header>
     <h1 style="text-align: center; color: white">
-      lmao ERROR 404 (Forbidden) BRO dari kelompok D06
+      lmao ERROR 404 (Not Found) BRO dari kelompok D06
     </h1>
   </header>
 </html>
 ' >/var/www/parikesit.abimanyu.D06/error/404.html
 
 echo "
-ErrorDocument 404 /error/404.html
-ErrorDocument 403 /error/403.html
-" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+<VirtualHost *:80>
+  ServerName parikesit.abimanyu.D06.com
+  ServerAlias www.parikesit.abimanyu.D06.com
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.D06
+
+  ErrorLog \${APACHE_LOG_DIR}/error.log
+  CustomLog \${APACHE_LOG_DIR}/access.log combined
+  
+  <Directory /var/www/parikesit.abimanyu.D06/public>
+    Options +Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/js>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/css>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/images>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/secret>
+    Options -Indexes
+  </Directory>
+  
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+</VirtualHost>" >/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+
+service apache2 restart
 ```
 
 - Client Nakula & Sadewa
 ```
 lynx parikesit.abimanyu.D06.com/error          # untuk cek 403
-lynx parikesit.abimanyu.D06.com/error/404.html # untuk cek 404
+lynx parikesit.abimanyu.D06.com/error/linkacak # untuk cek 404
 ```
 
 Apabila berhasil maka pada console `Client` akan muncul sebagai berikut
@@ -1004,8 +1061,37 @@ Setup terlebih dahulu di worker `Abimanyu`
 - Abimanyu
 ```
 echo "
-Alias \"/js\" \"/var/www/parikesit.abimanyu.D06/public/js\"
-" >>/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+<VirtualHost *:80>
+  ServerName parikesit.abimanyu.D06.com
+  ServerAlias www.parikesit.abimanyu.D06.com
+  ServerAdmin webmaster@localhost
+  DocumentRoot /var/www/parikesit.abimanyu.D06
+
+  ErrorLog \${APACHE_LOG_DIR}/error.log
+  CustomLog \${APACHE_LOG_DIR}/access.log combined
+  
+  <Directory /var/www/parikesit.abimanyu.D06/public>
+    Options +Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/js>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/css>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/public/images>
+    Options -Indexes
+  </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/secret>
+    Options -Indexes
+  </Directory>
+  
+  ErrorDocument 404 /error/404.html
+  ErrorDocument 403 /error/403.html
+  
+  Alias \"/js\" \"/var/www/parikesit.abimanyu.D06/public/js\"
+</VirtualHost>" >/etc/apache2/sites-available/parikesit.abimanyu.D06.com.conf
+
 service apache2 restart
 ```
 
