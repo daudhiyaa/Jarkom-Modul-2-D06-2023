@@ -21,4 +21,4 @@ zone \"1.194.192.in-addr.arpa\" {
 service bind9 restart
 
 # buat testing dns-slave
-service bind9 stop
+# service bind9 stop

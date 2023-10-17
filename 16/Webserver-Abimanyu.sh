@@ -23,6 +23,9 @@ echo "
   <Directory /var/www/parikesit.abimanyu.D06/secret>
     Options -Indexes
   </Directory>
+  <Directory /var/www/parikesit.abimanyu.D06/error>
+    Options -Indexes
+  </Directory>
   
   ErrorDocument 404 /error/404.html
   ErrorDocument 403 /error/403.html

@@ -27,7 +27,7 @@ server {
 }
 " >/etc/nginx/sites-available/jarkom
 
-apt-get update && apt-get install wget -y && apt-get install unzip -y 
+apt-get update && apt-get install wget -y && apt-get install unzip -y
 
 wget --no-check-certificate "https://drive.google.com/uc?export=download&id=17tAM_XDKYWDvF-JJix1x7txvTBEax7vX" -O /var/www/jarkom/arjuna.D06.com.zip
 
